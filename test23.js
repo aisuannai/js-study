@@ -11,19 +11,16 @@
  *   - 同一个对象被嵌套遍历时，内外两层互不干扰
  */
 function countdown(n) {
-  let num
   // TODO
    return {
-     [Symbol.iterator](){
-      this.num = n
-       return this
-     },
-     next(){
-        if(this.num < 0){
-            return {done:true}
-        } else {
-           return {done:false,value:this.num--}
-        }
+     [Symbol.iterator](){ 
+       let num = n
+       return {
+          next() {
+            if (num <= 0) return { done: true };
+            return { done: false, value: num-- };
+          }
+       }
      }
   }
 }
@@ -41,6 +38,21 @@ function countdown(n) {
  */
 function batch(items, size) {
   // TODO
+  return {
+     [Symbol.iterator](){
+      let array = []
+      array = array.concat(items);
+       return {
+          next(){
+            if(array.length === 0 ){
+                return {done:true}
+            } else {
+              return {done:false,value:array.splice(0, size)}
+            }
+         }
+       }
+     }
+  }
 }
 
 /**
@@ -55,6 +67,17 @@ function batch(items, size) {
  */
 function take(iterable, n) {
   // TODO
+  let array = []
+  let items = iterable[Symbol.iterator]()
+  while(n > 0){
+      let result =  items.next()
+      array = array.concat(result.value)
+      if(result.done){
+         break
+      }
+      n--
+  }
+  return array
 }
 
 /**
@@ -66,11 +89,13 @@ function take(iterable, n) {
  *   safeTruncate('abc', 10)  // 'abc'
  */
 function charCount(str) {
+  return ([...str].length)
   // TODO
 }
 
 function safeTruncate(str, max) {
   // TODO
+  return [...str].slice(0,max)
 }
 
 module.exports = { countdown, batch, take, charCount, safeTruncate };
