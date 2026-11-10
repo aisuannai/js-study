@@ -71,10 +71,11 @@ function take(iterable, n) {
   let items = iterable[Symbol.iterator]()
   while(n > 0){
       let result =  items.next()
-      array = array.concat(result.value)
+      //先done在取值
       if(result.done){
          break
       }
+      array.push(result.value)
       n--
   }
   return array
@@ -95,7 +96,10 @@ function charCount(str) {
 
 function safeTruncate(str, max) {
   // TODO
-  return [...str].slice(0,max)
+  if(charCount(str) < max){
+     return str
+  }
+  return [...str].slice(0,max).join('')
 }
 
 module.exports = { countdown, batch, take, charCount, safeTruncate };

@@ -12,14 +12,14 @@
  * 例：'true'、'NaN'、'[1,2]'、'{"a":1}'
  * ========================================================== */
 const PREDICTIONS = {
-  a1: '', // 0.1 + 0.2 === 0.3
-  a2: '', // parseInt('12px') + Number('12px')
-  a3: '', // [10, 9, 1, 100].sort()
-  a4: '', // 'a-b-c'.split('-', 2)
-  a5: '', // [1,2,3].map(x => x * 2).filter(x => x > 2)
-  a6: '', // [1,2,3,4].reduce((a, b) => a + b)
-  a7: '', // ' abc '.trim().length
-  a8: '', // const a=[1,2,3]; const b=a.slice(0,2); b.push(9); 此时 a.length
+  a1: 'false', // 0.1 + 0.2 === 0.3
+  a2: 'NaN', // parseInt('12px') + Number('12px')
+  a3: '1,9,10,100', // [10, 9, 1, 100].sort()
+  a4: 'a,b', // 'a-b-c'.split('-', 2)
+  a5: '[4,6]', // [1,2,3].map(x => x * 2).filter(x => x > 2)
+  a6: '10', // [1,2,3,4].reduce((a, b) => a + b)
+  a7: '3', // ' abc '.trim().length
+  a8: '3', // const a=[1,2,3]; const b=a.slice(0,2); b.push(9); 此时 a.length
 };
 
 // 下面是每道题对应的代码，自己读，别运行，先猜。
@@ -55,6 +55,7 @@ const A_SNIPPETS = {
  */
 function toInt(value) {
   // TODO
+  
 }
 
 /**
@@ -79,6 +80,12 @@ function parseToolArgs(raw) {
  */
 function truncate(text, max) {
   // TODO
+  let str = [...text].join('')
+  if(str.length <= max){
+    return str
+  } else {
+    return str.slice(0,max-1).padEnd(max,'')
+  }
 }
 
 /**
@@ -88,7 +95,12 @@ function truncate(text, max) {
  * 提示：Map 的 key 可以是任意类型，且 set 已存在的 key 不会改变顺序
  */
 function dedupeById(items) {
-  // TODO
+  let map = new Map()
+  for(let item of items){
+    map.set(item.id, item)
+  }
+  //转化为数组
+  return [...map.values()]
 }
 
 /**
@@ -98,6 +110,11 @@ function dedupeById(items) {
  */
 function groupByRole(messages) {
   // TODO
+  return messages.reduce((res,item)=>{
+    //空值合并
+     res[item.role] = (res[item.role]??0) + 1
+     return res
+  },{})
 }
 
 /**
@@ -107,6 +124,12 @@ function groupByRole(messages) {
  * 例：topN([{name:'a',score:1},{name:'b',score:3}], 1) -> [{name:'b',score:3}]
  */
 function topN(items, n) {
+  let array = []
+  array = array.concat(items)
+  array.sort((a,b)=>{
+    return  b.score - a.score
+  })
+  return array.slice(0,n)
   // TODO
 }
 
@@ -133,6 +156,22 @@ function extractJson(text) {
  */
 function countWords(text) {
   // TODO
+  let str = text.toLowerCase().match(/[a-z0-9_]+/g) ?? []
+  let tmpArr = []
+  for(let char of str){
+      tmpArr.push(char)
+  }
+  //数据reduce构建一个对象
+  let tmp = tmpArr.reduce((res,item)=>{
+    res[item] = (res[item]??0)+1
+    return res
+  },{})
+  
+  // Object.entries()把键值对作为数组返回
+  return Object.entries(tmp).sort((a,b)=>{
+       //这里用了当数字相等=0作为假值  string比较需要localeCompare()
+       return b[1]-a[1] || a[0].localeCompare(b[0])
+  })
 }
 
 /* ============================================================
@@ -161,6 +200,11 @@ function updateMessage(messages, index, patch) {
  */
 function isNumericString(value) {
   // TODO
+  let p = (value+'').trim()
+  if(Number.isFinite(+p)){
+      return p
+  }
+  return [p]
 }
 
 /**
@@ -171,6 +215,9 @@ function isNumericString(value) {
  */
 function sortNumericStrings(arr) {
   // TODO
+  let a = []
+  //必须显示的写一下排序规则
+  return a.concat(arr).map(item=>+item).sort((a,b)=>a-b).map(item=>item+'')
 }
 
 /* ============================================================
