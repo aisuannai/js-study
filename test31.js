@@ -67,15 +67,24 @@ function toJson(value) {
  */
 function logSafe(value) {
   // TODO
+  // TODO
   try {
      //循环引用是在stringify里面抛
      const s = JSON.stringify(value, function replacer(key,v1){
+        //undefined跳过
+        if(key !='' && v1 === undefined) {
+            return undefined
+        }
+        //循环引用跳过
+        if(key !='' && v1 === value){
+            return undefined
+        }
         if(typeof v1 == 'bigint'){
-            return v1+''  
+            return Number(v1) + ''
         }
         return v1
      })
-    return typeof s == 'string'?s:null
+     return s
   } catch (error) {
      return null
   }
@@ -91,7 +100,12 @@ function logSafe(value) {
  * 提示：replacer 改不了键顺序，得先递归重建对象（Object.keys().sort()），再 JSON.stringify
  */
 function stableStringify(value) {
-  // TODO
+   let b = {}
+   const a= Object.keys(value).sort()
+   for(let j of a){
+     b[j] = value[j]
+  }
+  return JSON.stringify(b)
 }
 
 /**
